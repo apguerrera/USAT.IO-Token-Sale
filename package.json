@@ -17,9 +17,8 @@
     "ethereumjs-abi": "^0.6.5",
     "ethereumjs-util": "^5.2.0",
     "geth": "^0.4.0",
-    "openzeppelin-solidity": "^1.10.0",
+    "openzeppelin-solidity": "^2.0.0-rc.1",
     "solc": "^0.4.24"
-
   },
   "devDependencies": {
     "eth-gas-reporter": "^0.1.9"
