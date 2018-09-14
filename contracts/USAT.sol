@@ -1,7 +1,8 @@
 pragma solidity ^0.4.24;
 
-// modified from Moritz Neto with BokkyPooBah / Bok Consulting Pty Ltd Au 2017. 
-// The MIT Licence.
+// Thank you to BokkyPooBah / Bok Consulting Pty Ltd 2018, Moritz Neto 
+// Originally based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
+// MIT Licence.
 
 // Added Open Zeppelin  
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
