@@ -92,7 +92,7 @@ truffle migrate --reset --network rinkeby
 ## Contracts
 
 **Token**:
-  * [USAT_Token.sol](/contracts/USAT_Token.sol): Coin definition implementing StandardToken functionality
+  * [USAT.sol](/contracts/USAT.sol): Coin definition implementing StandardToken functionality
 
 
 
