@@ -10,16 +10,13 @@ import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract USATToken is ERC20, Ownable {
-    string public symbol;
-    string public  name;
-    uint8 public decimals;
+    string public constant name = "USAT.IO Token";
+    string public constant symbol = "USAT";
+    uint8 public constant decimals = 18;
 
     //event USATSenderCheck(address owner, address sender, address spender);
     //event USATAllowed(address owner, address from, address sender, address to, uint token, uint org, uint diff);
     constructor() public {
-        symbol = "USAT";
-        name = "USAT.IO Token";
-        decimals = 18;
-        _mint(owner(), 1525000000000000000000000000);
+             _mint(owner(), 1525000000000000000000000000);
     }
 }
