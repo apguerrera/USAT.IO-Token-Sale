@@ -5,9 +5,11 @@ pragma solidity ^0.4.24;
 // MIT Licence.
 
 // Added Open Zeppelin  
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+
+import "./token/ERC20/IERC20.sol";
+import "./token/ERC20/ERC20.sol";
+import "./ownership/Ownable.sol";
+
 
 contract USATToken is ERC20, Ownable {
     string public constant name = "USAT.IO Token";
