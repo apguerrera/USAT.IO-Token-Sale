@@ -28,7 +28,7 @@ Install truffle using following command.
 npm install -g truffle
 ```
 
-## Setup CFB-Token
+## Setup USAT-Token
 
 ### Clone repository
 
@@ -94,12 +94,9 @@ truffle migrate --reset --network rinkeby
 **Token**:
   * [USAT.sol](/contracts/USAT.sol): Coin definition implementing StandardToken functionality
 
-
-
-
 # USAT Token Sales Smart Contract
 
-This repository contains the Smart Contract and tests for a USAT.io (USAT) token sale.
+This repository contains the Smart Contract and tests for a USAT.io (USAT) token.
 
 USAT is a ERC20-compliant token
 
