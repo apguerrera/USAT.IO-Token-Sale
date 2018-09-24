@@ -10,7 +10,6 @@ import "./token/ERC20/IERC20.sol";
 import "./token/ERC20/ERC20.sol";
 import "./ownership/Ownable.sol";
 
-
 contract USATToken is ERC20, Ownable {
     string public constant name = "USAT.IO Token";
     string public constant symbol = "USAT";
