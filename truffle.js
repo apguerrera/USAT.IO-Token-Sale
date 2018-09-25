@@ -7,8 +7,8 @@ module.exports = {
 			host: "localhost",
 			port: 9545,
 			network_id: "*"
-		},
-		local: {
+		}
+		,local: {
 			host: "localhost",
 			port: 9545,
 			network_id: "*"
@@ -21,6 +21,12 @@ module.exports = {
 			gas: 7099718,
 			gasPrice: 100000000000
 		}
-	}
+		,solc: {
+            optimizer: {
+            enabled: true,
+            runs: 200
+                       }
+                }
+	    }
 
 };
