@@ -73,28 +73,16 @@ Start ganache-cli using following script and keep it running in another tab. If 
 ```
 sh scripts/ganache-cli.sh
 ```
-
-### Deploy contracts
-
-```
-truffle migrate --reset --network local
-```
-
-## Deploy on rinkeby
-
-
-### Deploy contracts
-
-```
-truffle migrate --reset --network rinkeby
-```
-
 ## Contracts
+
+## Deployed on rinkeby
+Rinkeby Address0xd231Abda962D5e639C8fdCaAE8f2881b38eF62E2  
 
 **Token**:
   * [USAT.sol](/contracts/USAT.sol): Coin definition implementing StandardToken functionality
 
-# USAT Token Sales Smart Contract
+## USAT Token Sales Smart Contract
+Main net address: 0xD501a79aA34b4649D9EA1E6B7F40B166AD5d305b  
 
 This repository contains the Smart Contract and tests for a USAT.io (USAT) token.
 
@@ -108,7 +96,7 @@ USAT is a ERC20-compliant token
 
 ## Public Address
 ```
-0x____ TBA
+0xD501a79aA34b4649D9EA1E6B7F40B166AD5d305b
 ```
 Symbol:   USAT
 
@@ -116,7 +104,8 @@ Decimals: 18
 
 ## ABI (example)
 ```
-[
+  "contractName": "USATToken",
+  "abi": [
     {
       "constant": true,
       "inputs": [],
@@ -464,7 +453,7 @@ Decimals: 18
       "name": "Approval",
       "type": "event"
     }
-  ],
+  ]
 ```
 
 # ICO Logic
