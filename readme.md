@@ -102,7 +102,7 @@ Symbol:   USAT
 
 Decimals: 18
 
-## ABI (example)
+## ABI
 ```
   "contractName": "USATToken",
   "abi": [
