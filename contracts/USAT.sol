@@ -4,7 +4,7 @@ pragma solidity ^0.4.24;
 // Originally based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
 // MIT Licence.
 
-// Added Open Zeppelin  
+// Using OpenZeppelin Forked from OpenZeppelin/openzeppelin-solidity
 
 import "./token/ERC20/IERC20.sol";
 import "./token/ERC20/ERC20.sol";
