@@ -8,7 +8,7 @@ pragma solidity ^0.4.24;
 // Start openzeppelin-solidity import IERC20, ERC20, Ownable, SafeMath
 
 /**
- * @title ERC20 interface IERC20.sol
+ * @title ERC20 interface
  * @dev see https://github.com/ethereum/EIPs/issues/20
  */
 interface IERC20 {
@@ -45,7 +45,7 @@ interface IERC20 {
 
 
 /**
- * @title SafeMath.sol
+ * @title SafeMath
  * @dev Math operations with safety checks that revert on error
  */
 library SafeMath {
@@ -109,14 +109,6 @@ library SafeMath {
 }
 // End import "/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-
-/**
- * @title Standard ERC20.sol token
- *
- * @dev Implementation of the basic standard token.
- * https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md
- * Originally based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
- */
 contract ERC20 is IERC20 {
   using SafeMath for uint256;
 
@@ -313,7 +305,7 @@ contract ERC20 is IERC20 {
 // End import "/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 /**
- * @title Ownable.sol
+ * @title Ownable
  * @dev The Ownable contract has an owner address, and provides basic authorization control
  * functions, this simplifies the implementation of "user permissions".
  */
@@ -389,10 +381,10 @@ contract Ownable {
 // End import "/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 
-//Begin USATOZ Token
-contract USATOZ is ERC20, Ownable {
-    string public constant name = "USAT.IO IP Platform";
-    string public constant symbol = "USAT";
+
+contract USEXAMT is ERC20, Ownable {
+    string public constant name = "EXAM USAT.IO Token";
+    string public constant symbol = "USEXAM";
     uint8 public constant decimals = 18;
 
     //event USATSenderCheck(address owner, address sender, address spender);

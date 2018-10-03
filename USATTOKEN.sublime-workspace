@@ -1,0 +1,425 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "pragma solidity ^0.4.24;\n\n// Thank you to BokkyPooBah / Bok Consulting Pty Ltd 2018, Moritz Neto \n// Originally based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol\n// MIT Licence.\n\n// Using OpenZeppelin Forked from OpenZeppelin/openzeppelin-solidity\n// Start openzeppelin-solidity import IERC20, ERC20, Ownable, SafeMath\n\n/**\n * @title ERC20 interface IERC20.sol\n * @dev see https://github.com/ethereum/EIPs/issues/20\n */\ninterface IERC20 {\n  function totalSupply() external view returns (uint256);\n\n  function balanceOf(address who) external view returns (uint256);\n\n  function allowance(address owner, address spender)\n    external view returns (uint256);\n\n  function transfer(address to, uint256 value) external returns (bool);\n\n  function approve(address spender, uint256 value)\n    external returns (bool);\n\n  function transferFrom(address from, address to, uint256 value)\n    external returns (bool);\n\n  event Transfer(\n    address indexed from,\n    address indexed to,\n    uint256 value\n  );\n\n  event Approval(\n    address indexed owner,\n    address indexed spender,\n    uint256 value\n  );\n}\n\n\n// End import \"openzeppelin-solidity/contracts/token/ERC20/IERC20.sol\";\n\n\n/**\n * @title SafeMath.sol\n * @dev Math operations with safety checks that revert on error\n */\nlibrary SafeMath {\n\n  /**\n  * @dev Multiplies two numbers, reverts on overflow.\n  */\n  function mul(uint256 a, uint256 b) internal pure returns (uint256) {\n    // Gas optimization: this is cheaper than requiring 'a' not being zero, but the\n    // benefit is lost if 'b' is also tested.\n    // See: https://github.com/OpenZeppelin/openzeppelin-solidity/pull/522\n    if (a == 0) {\n      return 0;\n    }\n\n    uint256 c = a * b;\n    require(c / a == b);\n\n    return c;\n  }\n\n  /**\n  * @dev Integer division of two numbers truncating the quotient, reverts on division by zero.\n  */\n  function div(uint256 a, uint256 b) internal pure returns (uint256) {\n    require(b > 0); // Solidity only automatically asserts when dividing by 0\n    uint256 c = a / b;\n    // assert(a == b * c + a % b); // There is no case in which this doesn't hold\n\n    return c;\n  }\n\n  /**\n  * @dev Subtracts two numbers, reverts on overflow (i.e. if subtrahend is greater than minuend).\n  */\n  function sub(uint256 a, uint256 b) internal pure returns (uint256) {\n    require(b <= a);\n    uint256 c = a - b;\n\n    return c;\n  }\n\n  /**\n  * @dev Adds two numbers, reverts on overflow.\n  */\n  function add(uint256 a, uint256 b) internal pure returns (uint256) {\n    uint256 c = a + b;\n    require(c >= a);\n\n    return c;\n  }\n\n  /**\n  * @dev Divides two numbers and returns the remainder (unsigned integer modulo),\n  * reverts when dividing by zero.\n  */\n  function mod(uint256 a, uint256 b) internal pure returns (uint256) {\n    require(b != 0);\n    return a % b;\n  }\n}\n// End import \"openzeppelin-solidity/contracts/math/SafeMath.sol\";\n\n\n/**\n * @title Standard ERC20.sol token\n *\n * @dev Implementation of the basic standard token.\n * https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md\n * Originally based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol\n */\ncontract ERC20 is IERC20 {\n  using SafeMath for uint256;\n\n  mapping (address => uint256) private _balances;\n\n  mapping (address => mapping (address => uint256)) private _allowed;\n\n  uint256 private _totalSupply;\n\n  /**\n  * @dev Total number of tokens in existence\n  */\n  function totalSupply() public view returns (uint256) {\n    return _totalSupply;\n  }\n\n  /**\n  * @dev Gets the balance of the specified address.\n  * @param owner The address to query the balance of.\n  * @return An uint256 representing the amount owned by the passed address.\n  */\n  function balanceOf(address owner) public view returns (uint256) {\n    return _balances[owner];\n  }\n\n  /**\n   * @dev Function to check the amount of tokens that an owner allowed to a spender.\n   * @param owner address The address which owns the funds.\n   * @param spender address The address which will spend the funds.\n   * @return A uint256 specifying the amount of tokens still available for the spender.\n   */\n  function allowance(\n    address owner,\n    address spender\n   )\n    public\n    view\n    returns (uint256)\n  {\n    return _allowed[owner][spender];\n  }\n\n  /**\n  * @dev Transfer token for a specified address\n  * @param to The address to transfer to.\n  * @param value The amount to be transferred.\n  */\n  function transfer(address to, uint256 value) public returns (bool) {\n    require(value <= _balances[msg.sender]);\n    require(to != address(0));\n\n    _balances[msg.sender] = _balances[msg.sender].sub(value);\n    _balances[to] = _balances[to].add(value);\n    emit Transfer(msg.sender, to, value);\n    return true;\n  }\n\n  /**\n   * @dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.\n   * Beware that changing an allowance with this method brings the risk that someone may use both the old\n   * and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this\n   * race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards:\n   * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\n   * @param spender The address which will spend the funds.\n   * @param value The amount of tokens to be spent.\n   */\n  function approve(address spender, uint256 value) public returns (bool) {\n    require(spender != address(0));\n\n    _allowed[msg.sender][spender] = value;\n    emit Approval(msg.sender, spender, value);\n    return true;\n  }\n\n  /**\n   * @dev Transfer tokens from one address to another\n   * @param from address The address which you want to send tokens from\n   * @param to address The address which you want to transfer to\n   * @param value uint256 the amount of tokens to be transferred\n   */\n  function transferFrom(\n    address from,\n    address to,\n    uint256 value\n  )\n    public\n    returns (bool)\n  {\n    require(value <= _balances[from]);\n    require(value <= _allowed[from][msg.sender]);\n    require(to != address(0));\n\n    _balances[from] = _balances[from].sub(value);\n    _balances[to] = _balances[to].add(value);\n    _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);\n    emit Transfer(from, to, value);\n    return true;\n  }\n\n  /**\n   * @dev Increase the amount of tokens that an owner allowed to a spender.\n   * approve should be called when allowed_[_spender] == 0. To increment\n   * allowed value is better to use this function to avoid 2 calls (and wait until\n   * the first transaction is mined)\n   * From MonolithDAO Token.sol\n   * @param spender The address which will spend the funds.\n   * @param addedValue The amount of tokens to increase the allowance by.\n   */\n  function increaseAllowance(\n    address spender,\n    uint256 addedValue\n  )\n    public\n    returns (bool)\n  {\n    require(spender != address(0));\n\n    _allowed[msg.sender][spender] = (\n      _allowed[msg.sender][spender].add(addedValue));\n    emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);\n    return true;\n  }\n\n  /**\n   * @dev Decrease the amount of tokens that an owner allowed to a spender.\n   * approve should be called when allowed_[_spender] == 0. To decrement\n   * allowed value is better to use this function to avoid 2 calls (and wait until\n   * the first transaction is mined)\n   * From MonolithDAO Token.sol\n   * @param spender The address which will spend the funds.\n   * @param subtractedValue The amount of tokens to decrease the allowance by.\n   */\n  function decreaseAllowance(\n    address spender,\n    uint256 subtractedValue\n  )\n    public\n    returns (bool)\n  {\n    require(spender != address(0));\n\n    _allowed[msg.sender][spender] = (\n      _allowed[msg.sender][spender].sub(subtractedValue));\n    emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);\n    return true;\n  }\n\n  /**\n   * @dev Internal function that mints an amount of the token and assigns it to\n   * an account. This encapsulates the modification of balances such that the\n   * proper events are emitted.\n   * @param account The account that will receive the created tokens.\n   * @param amount The amount that will be created.\n   */\n  function _mint(address account, uint256 amount) internal {\n    require(account != 0);\n    _totalSupply = _totalSupply.add(amount);\n    _balances[account] = _balances[account].add(amount);\n    emit Transfer(address(0), account, amount);\n  }\n\n  /**\n   * @dev Internal function that burns an amount of the token of a given\n   * account.\n   * @param account The account whose tokens will be burnt.\n   * @param amount The amount that will be burnt.\n   */\n  function _burn(address account, uint256 amount) internal {\n    require(account != 0);\n    require(amount <= _balances[account]);\n\n    _totalSupply = _totalSupply.sub(amount);\n    _balances[account] = _balances[account].sub(amount);\n    emit Transfer(account, address(0), amount);\n  }\n\n  /**\n   * @dev Internal function that burns an amount of the token of a given\n   * account, deducting from the sender's allowance for said account. Uses the\n   * internal burn function.\n   * @param account The account whose tokens will be burnt.\n   * @param amount The amount that will be burnt.\n   */\n  function _burnFrom(address account, uint256 amount) internal {\n    require(amount <= _allowed[account][msg.sender]);\n\n    // Should https://github.com/OpenZeppelin/zeppelin-solidity/issues/707 be accepted,\n    // this function needs to emit an event with the updated approval.\n    _allowed[account][msg.sender] = _allowed[account][msg.sender].sub(\n      amount);\n    _burn(account, amount);\n  }\n}\n// End import \"openzeppelin-solidity/contracts/token/ERC20/ERC20.sol\";\n\n/**\n * @title Ownable.sol\n * @dev The Ownable contract has an owner address, and provides basic authorization control\n * functions, this simplifies the implementation of \"user permissions\".\n */\ncontract Ownable {\n  address private _owner;\n\n  event OwnershipRenounced(address indexed previousOwner);\n  event OwnershipTransferred(\n    address indexed previousOwner,\n    address indexed newOwner\n  );\n\n  /**\n   * @dev The Ownable constructor sets the original `owner` of the contract to the sender\n   * account.\n   */\n  constructor() public {\n    _owner = msg.sender;\n  }\n\n  /**\n   * @return the address of the owner.\n   */\n  function owner() public view returns(address) {\n    return _owner;\n  }\n\n  /**\n   * @dev Throws if called by any account other than the owner.\n   */\n  modifier onlyOwner() {\n    require(isOwner());\n    _;\n  }\n\n  /**\n   * @return true if `msg.sender` is the owner of the contract.\n   */\n  function isOwner() public view returns(bool) {\n    return msg.sender == _owner;\n  }\n\n  /**\n   * @dev Allows the current owner to relinquish control of the contract.\n   * @notice Renouncing to ownership will leave the contract without an owner.\n   * It will not be possible to call the functions with the `onlyOwner`\n   * modifier anymore.\n   */\n  function renounceOwnership() public onlyOwner {\n    emit OwnershipRenounced(_owner);\n    _owner = address(0);\n  }\n\n  /**\n   * @dev Allows the current owner to transfer control of the contract to a newOwner.\n   * @param newOwner The address to transfer ownership to.\n   */\n  function transferOwnership(address newOwner) public onlyOwner {\n    _transferOwnership(newOwner);\n  }\n\n  /**\n   * @dev Transfers control of the contract to a newOwner.\n   * @param newOwner The address to transfer ownership to.\n   */\n  function _transferOwnership(address newOwner) internal {\n    require(newOwner != address(0));\n    emit OwnershipTransferred(_owner, newOwner);\n    _owner = newOwner;\n  }\n}\n\n// End import \"openzeppelin-solidity/contracts/ownership/Ownable.sol\";\n\n\n//Begin USATOZ Token\ncontract USATOZ is ERC20, Ownable {\n    string public constant name = \"USAT.IO IP Platform\";\n    string public constant symbol = \"USAT\";\n    uint8 public constant decimals = 18;\n\n        constructor() public {\n             _mint(owner(), 1525000000000000000000000000);\n    }\n}",
+			"file": "contracts/USAT.sol",
+			"file_size": 12775,
+			"file_write_time": 131830112740000000,
+			"settings":
+			{
+				"buffer_size": 12097,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "b1.md",
+			"settings":
+			{
+				"buffer_size": 11626,
+				"encoding": "UTF-8",
+				"line_ending": "Windows",
+				"name": "{"
+			}
+		},
+		{
+			"contents": "{\n\t\"linkReferences\": {},\n\t\"object\": \"608060405234801561001057600080fd5b50610644806100206000396000f30060806040526004361061008d5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461009257806318160ddd146100ca57806323b872dd146100f1578063395093511461011b57806370a082311461013f578063a457c2d714610160578063a9059cbb14610184578063dd62ed3e146101a8575b600080fd5b34801561009e57600080fd5b506100b6600160a060020a03600435166024356101cf565b604080519115158252519081900360200190f35b3480156100d657600080fd5b506100df61024d565b60408051918252519081900360200190f35b3480156100fd57600080fd5b506100b6600160a060020a0360043581169060243516604435610253565b34801561012757600080fd5b506100b6600160a060020a03600435166024356103c8565b34801561014b57600080fd5b506100df600160a060020a0360043516610478565b34801561016c57600080fd5b506100b6600160a060020a0360043516602435610493565b34801561019057600080fd5b506100b6600160a060020a03600435166024356104de565b3480156101b457600080fd5b506100df600160a060020a03600435811690602435166105bd565b6000600160a060020a03831615156101e657600080fd5b336000818152600160209081526040808320600160a060020a03881680855290835292819020869055805186815290519293927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a350600192915050565b60025490565b600160a060020a03831660009081526020819052604081205482111561027857600080fd5b600160a060020a03841660009081526001602090815260408083203384529091529020548211156102a857600080fd5b600160a060020a03831615156102bd57600080fd5b600160a060020a0384166000908152602081905260409020546102e6908363ffffffff6105e816565b600160a060020a03808616600090815260208190526040808220939093559085168152205461031b908363ffffffff6105ff16565b600160a060020a0380851660009081526020818152604080832094909455918716815260018252828120338252909152205461035d908363ffffffff6105e816565b600160a060020a03808616600081815260016020908152604080832033845282529182902094909455805186815290519287169391927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a35060019392505050565b6000600160a060020a03831615156103df57600080fd5b336000908152600160209081526040808320600160a060020a0387168452909152902054610413908363ffffffff6105ff16565b336000818152600160209081526040808320600160a060020a0389168085529083529281902085905580519485525191937f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929081900390910190a350600192915050565b600160a060020a031660009081526020819052604090205490565b6000600160a060020a03831615156104aa57600080fd5b336000908152600160209081526040808320600160a060020a0387168452909152902054610413908363ffffffff6105e816565b336000908152602081905260408120548211156104fa57600080fd5b600160a060020a038316151561050f57600080fd5b3360009081526020819052604090205461052f908363ffffffff6105e816565b3360009081526020819052604080822092909255600160a060020a03851681522054610561908363ffffffff6105ff16565b600160a060020a038416600081815260208181526040918290209390935580518581529051919233927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a350600192915050565b600160a060020a03918216600090815260016020908152604080832093909416825291909152205490565b600080838311156105f857600080fd5b5050900390565b60008282018381101561061157600080fd5b93925050505600a165627a7a7230582000a682942a24c8db9b85b745588c725a3bebaa3b67fc0c4d0a0f58806f82e1230029\",\n\t\"opcodes\": \"PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH2 0x10 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x644 DUP1 PUSH2 0x20 PUSH1 0x0 CODECOPY PUSH1 0x0 RETURN STOP PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x4 CALLDATASIZE LT PUSH2 0x8D JUMPI PUSH4 0xFFFFFFFF PUSH29 0x100000000000000000000000000000000000000000000000000000000 PUSH1 0x0 CALLDATALOAD DIV AND PUSH4 0x95EA7B3 DUP2 EQ PUSH2 0x92 JUMPI DUP1 PUSH4 0x18160DDD EQ PUSH2 0xCA JUMPI DUP1 PUSH4 0x23B872DD EQ PUSH2 0xF1 JUMPI DUP1 PUSH4 0x39509351 EQ PUSH2 0x11B JUMPI DUP1 PUSH4 0x70A08231 EQ PUSH2 0x13F JUMPI DUP1 PUSH4 0xA457C2D7 EQ PUSH2 0x160 JUMPI DUP1 PUSH4 0xA9059CBB EQ PUSH2 0x184 JUMPI DUP1 PUSH4 0xDD62ED3E EQ PUSH2 0x1A8 JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x9E JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0xB6 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB PUSH1 0x4 CALLDATALOAD AND PUSH1 0x24 CALLDATALOAD PUSH2 0x1CF JUMP JUMPDEST PUSH1 0x40 DUP1 MLOAD SWAP2 ISZERO ISZERO DUP3 MSTORE MLOAD SWAP1 DUP2 SWAP1 SUB PUSH1 0x20 ADD SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0xD6 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0xDF PUSH2 0x24D JUMP JUMPDEST PUSH1 0x40 DUP1 MLOAD SWAP2 DUP3 MSTORE MLOAD SWAP1 DUP2 SWAP1 SUB PUSH1 0x20 ADD SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0xFD JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0xB6 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB PUSH1 0x4 CALLDATALOAD DUP2 AND SWAP1 PUSH1 0x24 CALLDATALOAD AND PUSH1 0x44 CALLDATALOAD PUSH2 0x253 JUMP JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x127 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0xB6 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB PUSH1 0x4 CALLDATALOAD AND PUSH1 0x24 CALLDATALOAD PUSH2 0x3C8 JUMP JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x14B JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0xDF PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB PUSH1 0x4 CALLDATALOAD AND PUSH2 0x478 JUMP JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x16C JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0xB6 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB PUSH1 0x4 CALLDATALOAD AND PUSH1 0x24 CALLDATALOAD PUSH2 0x493 JUMP JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x190 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0xB6 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB PUSH1 0x4 CALLDATALOAD AND PUSH1 0x24 CALLDATALOAD PUSH2 0x4DE JUMP JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x1B4 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0xDF PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB PUSH1 0x4 CALLDATALOAD DUP2 AND SWAP1 PUSH1 0x24 CALLDATALOAD AND PUSH2 0x5BD JUMP JUMPDEST PUSH1 0x0 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP4 AND ISZERO ISZERO PUSH2 0x1E6 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST CALLER PUSH1 0x0 DUP2 DUP2 MSTORE PUSH1 0x1 PUSH1 0x20 SWAP1 DUP2 MSTORE PUSH1 0x40 DUP1 DUP4 KECCAK256 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP9 AND DUP1 DUP6 MSTORE SWAP1 DUP4 MSTORE SWAP3 DUP2 SWAP1 KECCAK256 DUP7 SWAP1 SSTORE DUP1 MLOAD DUP7 DUP2 MSTORE SWAP1 MLOAD SWAP3 SWAP4 SWAP3 PUSH32 0x8C5BE1E5EBEC7D5BD14F71427D1E84F3DD0314C0F7B2291E5B200AC8C7C3B925 SWAP3 SWAP2 DUP2 SWAP1 SUB SWAP1 SWAP2 ADD SWAP1 LOG3 POP PUSH1 0x1 SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x2 SLOAD SWAP1 JUMP JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP4 AND PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x20 DUP2 SWAP1 MSTORE PUSH1 0x40 DUP2 KECCAK256 SLOAD DUP3 GT ISZERO PUSH2 0x278 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP5 AND PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x1 PUSH1 0x20 SWAP1 DUP2 MSTORE PUSH1 0x40 DUP1 DUP4 KECCAK256 CALLER DUP5 MSTORE SWAP1 SWAP2 MSTORE SWAP1 KECCAK256 SLOAD DUP3 GT ISZERO PUSH2 0x2A8 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP4 AND ISZERO ISZERO PUSH2 0x2BD JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP5 AND PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x20 DUP2 SWAP1 MSTORE PUSH1 0x40 SWAP1 KECCAK256 SLOAD PUSH2 0x2E6 SWAP1 DUP4 PUSH4 0xFFFFFFFF PUSH2 0x5E8 AND JUMP JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP1 DUP7 AND PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x20 DUP2 SWAP1 MSTORE PUSH1 0x40 DUP1 DUP3 KECCAK256 SWAP4 SWAP1 SWAP4 SSTORE SWAP1 DUP6 AND DUP2 MSTORE KECCAK256 SLOAD PUSH2 0x31B SWAP1 DUP4 PUSH4 0xFFFFFFFF PUSH2 0x5FF AND JUMP JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP1 DUP6 AND PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x20 DUP2 DUP2 MSTORE PUSH1 0x40 DUP1 DUP4 KECCAK256 SWAP5 SWAP1 SWAP5 SSTORE SWAP2 DUP8 AND DUP2 MSTORE PUSH1 0x1 DUP3 MSTORE DUP3 DUP2 KECCAK256 CALLER DUP3 MSTORE SWAP1 SWAP2 MSTORE KECCAK256 SLOAD PUSH2 0x35D SWAP1 DUP4 PUSH4 0xFFFFFFFF PUSH2 0x5E8 AND JUMP JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP1 DUP7 AND PUSH1 0x0 DUP2 DUP2 MSTORE PUSH1 0x1 PUSH1 0x20 SWAP1 DUP2 MSTORE PUSH1 0x40 DUP1 DUP4 KECCAK256 CALLER DUP5 MSTORE DUP3 MSTORE SWAP2 DUP3 SWAP1 KECCAK256 SWAP5 SWAP1 SWAP5 SSTORE DUP1 MLOAD DUP7 DUP2 MSTORE SWAP1 MLOAD SWAP3 DUP8 AND SWAP4 SWAP2 SWAP3 PUSH32 0xDDF252AD1BE2C89B69C2B068FC378DAA952BA7F163C4A11628F55A4DF523B3EF SWAP3 SWAP2 DUP2 SWAP1 SUB SWAP1 SWAP2 ADD SWAP1 LOG3 POP PUSH1 0x1 SWAP4 SWAP3 POP POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP4 AND ISZERO ISZERO PUSH2 0x3DF JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST CALLER PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x1 PUSH1 0x20 SWAP1 DUP2 MSTORE PUSH1 0x40 DUP1 DUP4 KECCAK256 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP8 AND DUP5 MSTORE SWAP1 SWAP2 MSTORE SWAP1 KECCAK256 SLOAD PUSH2 0x413 SWAP1 DUP4 PUSH4 0xFFFFFFFF PUSH2 0x5FF AND JUMP JUMPDEST CALLER PUSH1 0x0 DUP2 DUP2 MSTORE PUSH1 0x1 PUSH1 0x20 SWAP1 DUP2 MSTORE PUSH1 0x40 DUP1 DUP4 KECCAK256 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP10 AND DUP1 DUP6 MSTORE SWAP1 DUP4 MSTORE SWAP3 DUP2 SWAP1 KECCAK256 DUP6 SWAP1 SSTORE DUP1 MLOAD SWAP5 DUP6 MSTORE MLOAD SWAP2 SWAP4 PUSH32 0x8C5BE1E5EBEC7D5BD14F71427D1E84F3DD0314C0F7B2291E5B200AC8C7C3B925 SWAP3 SWAP1 DUP2 SWAP1 SUB SWAP1 SWAP2 ADD SWAP1 LOG3 POP PUSH1 0x1 SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB AND PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x20 DUP2 SWAP1 MSTORE PUSH1 0x40 SWAP1 KECCAK256 SLOAD SWAP1 JUMP JUMPDEST PUSH1 0x0 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP4 AND ISZERO ISZERO PUSH2 0x4AA JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST CALLER PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x1 PUSH1 0x20 SWAP1 DUP2 MSTORE PUSH1 0x40 DUP1 DUP4 KECCAK256 PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP8 AND DUP5 MSTORE SWAP1 SWAP2 MSTORE SWAP1 KECCAK256 SLOAD PUSH2 0x413 SWAP1 DUP4 PUSH4 0xFFFFFFFF PUSH2 0x5E8 AND JUMP JUMPDEST CALLER PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x20 DUP2 SWAP1 MSTORE PUSH1 0x40 DUP2 KECCAK256 SLOAD DUP3 GT ISZERO PUSH2 0x4FA JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP4 AND ISZERO ISZERO PUSH2 0x50F JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST CALLER PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x20 DUP2 SWAP1 MSTORE PUSH1 0x40 SWAP1 KECCAK256 SLOAD PUSH2 0x52F SWAP1 DUP4 PUSH4 0xFFFFFFFF PUSH2 0x5E8 AND JUMP JUMPDEST CALLER PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x20 DUP2 SWAP1 MSTORE PUSH1 0x40 DUP1 DUP3 KECCAK256 SWAP3 SWAP1 SWAP3 SSTORE PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP6 AND DUP2 MSTORE KECCAK256 SLOAD PUSH2 0x561 SWAP1 DUP4 PUSH4 0xFFFFFFFF PUSH2 0x5FF AND JUMP JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB DUP5 AND PUSH1 0x0 DUP2 DUP2 MSTORE PUSH1 0x20 DUP2 DUP2 MSTORE PUSH1 0x40 SWAP2 DUP3 SWAP1 KECCAK256 SWAP4 SWAP1 SWAP4 SSTORE DUP1 MLOAD DUP6 DUP2 MSTORE SWAP1 MLOAD SWAP2 SWAP3 CALLER SWAP3 PUSH32 0xDDF252AD1BE2C89B69C2B068FC378DAA952BA7F163C4A11628F55A4DF523B3EF SWAP3 DUP2 SWAP1 SUB SWAP1 SWAP2 ADD SWAP1 LOG3 POP PUSH1 0x1 SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x1 PUSH1 0xA0 PUSH1 0x2 EXP SUB SWAP2 DUP3 AND PUSH1 0x0 SWAP1 DUP2 MSTORE PUSH1 0x1 PUSH1 0x20 SWAP1 DUP2 MSTORE PUSH1 0x40 DUP1 DUP4 KECCAK256 SWAP4 SWAP1 SWAP5 AND DUP3 MSTORE SWAP2 SWAP1 SWAP2 MSTORE KECCAK256 SLOAD SWAP1 JUMP JUMPDEST PUSH1 0x0 DUP1 DUP4 DUP4 GT ISZERO PUSH2 0x5F8 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP POP SWAP1 SUB SWAP1 JUMP JUMPDEST PUSH1 0x0 DUP3 DUP3 ADD DUP4 DUP2 LT ISZERO PUSH2 0x611 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST SWAP4 SWAP3 POP POP POP JUMP STOP LOG1 PUSH6 0x627A7A723058 KECCAK256 STOP 0xa6 DUP3 SWAP5 0x2a 0x24 0xc8 0xdb SWAP12 DUP6 0xb7 GASLIMIT PC DUP13 PUSH19 0x5A3BEBAA3B67FC0C4D0A0F58806F82E1230029 \",\n\t\"sourceMap\": \"3341:6685:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;3341:6685:0;;;;;;;\"\n}",
+			"file": "b2.md",
+			"file_size": 0,
+			"file_write_time": 131830117574000000,
+			"settings":
+			{
+				"buffer_size": 11626,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/E/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol",
+			"settings":
+			{
+				"buffer_size": 6981,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Package Control: In",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"INSTALL",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: add",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Add Repository"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 157.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/E/USAT.IO-Token-Sale/contracts/USAT.sol",
+		"/E/USAT.IO-Token-Sale/build/contracts/USATToken.json",
+		"/E/usat.io/EXAM.sol",
+		"/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol",
+		"/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/math/SafeMath.sol",
+		"/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/ownership/Ownable.sol",
+		"/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol",
+		"/E/usat.io/node_modules/openzeppelin-solidity/contracts/token/ERC20/CappedToken.sol",
+		"/E/usat.io/node_modules/openzeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol",
+		"/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/math/Math.sol",
+		"/E/usat.io/node_modules/openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol",
+		"/E/usat.io/node_modules/openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol",
+		"/E/usat.io/node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol",
+		"/E/usat.io/node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol",
+		"/E/usat.io/LICENSE",
+		"/E/USAT.IO-Token-Sale/readme.md",
+		"/E/Program Files/nodejs/nodevars.bat",
+		"/E/usat.io/truffle.js",
+		"/E/OLD v 2 USAT.IO-Token-Sale/truffle.js",
+		"/E/openzeppelin-solidity/package.json",
+		"/E/USAT.IO-Token-Sale/build/contracts/Secondary.json",
+		"/E/USAT.IO-Token-Sale/build/contracts/IERC20.json",
+		"/E/USAT.IO-Token-Sale/build/contracts/Address.json",
+		"/E/USAT.IO-Token-Sale/package-lock.json",
+		"/E/USAT.IO-Token-Sale/USATToken.json",
+		"/E/remix-b575638/README.md",
+		"/E/remix/build/app.js",
+		"/C/Program Files/GIMP 2/32/etc/gtk-2.0/im-multipress.conf",
+		"/C/Program Files/GIMP 2/etc/gimp/2.0/sessionrc",
+		"/C/Program Files/WindowsPowerShell/Modules/PowerShellGet/1.0.0.1/PowerShellGet.psd1",
+		"/E/USAT.IO-Token-Sale/truffle.js",
+		"/E/USAT.IO-Token-Sale/.gitignore",
+		"/E/USAT.IO-Token-Sale/package.json",
+		"/E/USAT.IO-Token-Sale/_config.yml",
+		"/E/USAT.IO-Token-Sale/contracts/payment/PullPayment.sol",
+		"/E/USAT.IO-Token-Sale/contracts/payment/SplitPayment.sol",
+		"/E/USAT.IO-Token-Sale/contracts/lifecycle/Pausable.sol",
+		"/E/USAT.IO-Token-Sale/contracts/token/ERC20/IERC20.sol",
+		"/E/USAT.IO-Token-Sale/contracts/utils/Address.sol",
+		"/E/USAT.IO-Token-Sale/contracts/token/ERC20/ERC20.sol",
+		"/E/USAT.IO-Token-Sale/contracts/token/ERC20/ERC20Capped.sol",
+		"/E/USAT.IO-Token-Sale/contracts/token/ERC20/ERC20Detailed.sol",
+		"/E/USAT.IO-Token-Sale/contracts/lifecycle/Plausible.sol",
+		"/E/USAT.IO-Token-Sale/contracts/token/ERC20/TokenTimelock.sol",
+		"/E/USAT.IO-Token-Sale/migrations/2_deploy_CCLToken.js",
+		"/E/USAT.IO-Token-Sale/build/contracts/ERC20.json",
+		"/E/IJSTUFF/USAT Info/ICO/Ethereum/Testnet/Ropsten/Testether.txt",
+		"/C/build/usat",
+		"/E/IJSTUFF/USAT Info/USAT.IO-Token-Sale/readme.md",
+		"/E/IJSTUFF/USAT Info/USAT.IO-Token-Sale/index.md",
+		"/E/USAT.IO-Token-Sale/contracts/Ownable.sol",
+		"/E/USAT.IO-Token-Sale/contracts/payment/Escrow.sol",
+		"/E/USAT.IO-Token-Sale/contracts/IERC20.sol",
+		"/E/USAT.IO-Token-Sale/contracts/ERC20.sol",
+		"/E/openzeppelin-solidity/contracts/token/ERC20/TokenTimelock.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/USAT.io Token/truffle.js",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/GIT Hub/cyclean-master/cyclean-master/coin.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/USAT.io Token/Zep Token.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/USAT.io Token/USAT.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/USAT.io Token/test/tokensale.js",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/USAT.io Token/test/kycbase.js",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/USAT.io Token/CFB Tolen.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/GIT Hub/CyCleanTokenSale-master/CyCleanTokenSale-master/truffle-config.js",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/USAT.io Token/package.json",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/GIT Hub/CyCleanTokenSale-master/CyCleanTokenSale-master/truffle.js",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/GIT Hub/CyCleanTokenSale-master/CyCleanTokenSale-master/contracts/KYCBase.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/GIT Hub/CyCleanTokenSale-master/CyCleanTokenSale-master/contracts/KYCBaseTester.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/GIT Hub/CyCleanTokenSale-master/CyCleanTokenSale-master/contracts/Migrations.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/GIT Hub/CyCleanTokenSale-master/CyCleanTokenSale-master/contracts/SafeMath.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/GIT Hub/CyCleanTokenSale-master/CyCleanTokenSale-master/contracts/ERC20Interface.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/GIT Hub/CyCleanTokenSale-master/CyCleanTokenSale-master/contracts/ICOEngineInterface.sol",
+		"/D/IJSTUFF/USAT Info/ICO/Ethereum/Code/USAT.io Token/Zep Token",
+		"/C/Users/ijase/AppData/Roaming/Sublime Text 3/Packages/User/Package Control.sublime-settings",
+		"/C/Users/ijase/AppData/Roaming/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings"
+	],
+	"find":
+	{
+		"height": 42.6666666667
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"/E",
+			"decrea",
+			"/",
+			"import \"https:\\\\github.com/OpenZeppelin/openzeppelin-solidity/tree/master/contracts/token/ERC20/IERC20.sol\";\nimport \"https://github.com/OpenZeppelin/openzeppelin-solidity/tree/master/contracts/token/ERC20/ERC20.sol\";\nimport \"https://github.com/OpenZeppelin/openzeppelin-solidity/tree/master/contracts/ownership/Ownable.sol\";",
+			"CCL",
+			"ccl"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"\\",
+			"|"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "contracts/USAT.sol",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12097,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12097,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ethereum/Solidity.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "b1.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11626,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11626,
+								11626
+							]
+						],
+						"settings":
+						{
+							"auto_name": "{",
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "b2.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11626,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11626,
+								11626
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/E/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6981,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								24,
+								24
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ethereum/Solidity.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 29.0
+	},
+	"input":
+	{
+		"height": 39.3333333333
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "USATTOKEN.sublime-project",
+	"replace":
+	{
+		"height": 54.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
