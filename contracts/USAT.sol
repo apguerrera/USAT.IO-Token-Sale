@@ -1,5 +1,7 @@
 pragma solidity ^0.4.24;
 
+//USATOZ.sol v1.0
+
 // Thank you to BokkyPooBah / Bok Consulting Pty Ltd 2018, Moritz Neto 
 // Originally based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
 // MIT Licence.
@@ -43,9 +45,7 @@ interface IERC20 {
   );
 }
 
-
 // End import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-
 
 /**
  * @title SafeMath.sol
@@ -111,7 +111,6 @@ library SafeMath {
   }
 }
 // End import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-
 
 /**
  * @title Standard ERC20.sol token
