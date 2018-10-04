@@ -7,6 +7,9 @@ pragma solidity ^0.4.24;
 // Using OpenZeppelin Forked from OpenZeppelin/openzeppelin-solidity
 // Start openzeppelin-solidity import IERC20, ERC20, Ownable, SafeMath
 
+// Multi file code previously used import function
+// Flattened for use on Remix.Ethereum.org
+
 /**
  * @title ERC20 interface IERC20.sol
  * @dev see https://github.com/ethereum/EIPs/issues/20
@@ -41,7 +44,7 @@ interface IERC20 {
 }
 
 
-// End import "/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+// End import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 
 /**
@@ -107,7 +110,7 @@ library SafeMath {
     return a % b;
   }
 }
-// End import "/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/math/SafeMath.sol";
+// End import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 
 /**
@@ -310,7 +313,7 @@ contract ERC20 is IERC20 {
     _burn(account, amount);
   }
 }
-// End import "/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+// End import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 /**
  * @title Ownable.sol
@@ -386,8 +389,7 @@ contract Ownable {
   }
 }
 
-// End import "/E/USAT.IO-Token-Sale/openzeppelin-solidity/contracts/ownership/Ownable.sol";
-
+// End import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 //Begin USATOZ Token
 contract USATOZ is ERC20, Ownable {
@@ -395,9 +397,7 @@ contract USATOZ is ERC20, Ownable {
     string public constant symbol = "USAT";
     uint8 public constant decimals = 18;
 
-    //event USATSenderCheck(address owner, address sender, address spender);
-    //event USATAllowed(address owner, address from, address sender, address to, uint token, uint org, uint diff);
-    constructor() public {
+        constructor() public {
              _mint(owner(), 1525000000000000000000000000);
     }
 }
