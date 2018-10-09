@@ -12,6 +12,21 @@
 
   <br />
 
+
+### Findings
+  * [] **MEDIUM IMPORTANCE** When people send ETH to the contract, it should fail.
+    * [] Might want to add a revert for the default callback.
+  * [] **LOW IMPORTANCE** When people send ERC20 tokens to the contract, contract owner should be able to transfer them.
+    * [] Could add generic ERC20 interface and transfer function with onlyOwner modifier.
+  * [] **LOW IMPORTANCE** Mint and burn function is not utilised throughout contract.
+    * [] Could consider either making the contract mintable or allocate tokens to the owner within the constructor and remove unused internal functions.
+  * [] **LOW IMPORTANCE** USATOZ contract doesn't use onlyOwner modifier
+      * [] Not explicitly used in this token contract but could be useful later.
+  * [] **NOTE** renounceOwnership() does exactly what it describes. Be cautious as it is irreversible.
+  * [] **NOTE** transferOwnership() requires extra gas when attempted from a unowned account before its failure. Still behaves as expected though.
+
+<br />
+
 ## Deployment
 
 * [x] [contracts/USAT.sol](contracts/USAT.sol)
@@ -35,7 +50,7 @@ tester2 | 0xb7b461d9ba5e1fd0fef9ba8b1ee01ca815609609
 
 <br />
 
-### Usability Testing
+## Usability Testing
 
 * [x] View Functions
   * [x] name
@@ -50,16 +65,17 @@ tester2 | 0xb7b461d9ba5e1fd0fef9ba8b1ee01ca815609609
   * [x] allowance
   * [x] increaseAllowance
   * [x] decreaseAllowance
-* [] Transfer Functions
-  * [] transfer
-  * [] transferFrom
-* [] Ownership Functions
-  * [] renounceOwnership
-  * [] transferOwnership
+* [x] Transfer Functions
+  * [x] transfer
+  * [x] transferFrom
+* [x] Ownership Functions
+  * [x] transferOwnership
+  * [x] renounceOwnership
+
 
 <br />
 
-### View Functions
+### Contract Variables
 #### Set Variables
 
 Parameters:
