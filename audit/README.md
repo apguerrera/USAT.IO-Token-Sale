@@ -1,7 +1,7 @@
 
 # USAT Token
 
-## Code Review Audit
+## Code Review
 
 * [x] [code-review/USAT.md](code-review/USAT.md)
   * [x] interface IERC20
@@ -13,7 +13,7 @@
   <br />
 
 
-### Findings
+#### Findings
   * [] **MEDIUM IMPORTANCE** When people send ETH to the contract, it should fail.
     * [] Might want to add a revert for the default callback.
   * [] **LOW IMPORTANCE** When people send ERC20 tokens to the contract, contract owner should be able to transfer them.
@@ -25,6 +25,28 @@
   * [] **NOTE** renounceOwnership() does exactly what it describes. Be cautious as it is irreversible.
   * [] **NOTE** transferOwnership() requires extra gas when attempted from a unowned account before its failure. Still behaves as expected though.
 
+<br />
+
+#### Revert Example
+```javascript
+// ------------------------------------------------------------------------
+// Don't accept ETH
+// ------------------------------------------------------------------------
+function () public payable {
+    revert();
+}
+```
+<br />
+
+#### Token Return Example
+```javascript
+// ------------------------------------------------------------------------
+// Owner can transfer out any accidentally sent ERC20 tokens
+// ------------------------------------------------------------------------
+function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
+    return IERC20(tokenAddress).transfer(owner, tokens);
+}
+```
 <br />
 
 ## Deployment
