@@ -27,6 +27,13 @@ USATOZ |   [0xC58aba8193a5e33764244eB07f41B91eF51EA3Ca](https://ropsten.ethersca
 
 <br />
 
+Account                           | Address
+:-------------------------------- |:-------
+owner   | 0xf1bfb2aca2bbb78976523b499b525c2c245ea209
+tester1 | 0xa0c7deea2057ce49b1a8d1df9e90f2aa364f840a
+tester2 | 0xb7b461d9ba5e1fd0fef9ba8b1ee01ca815609609
+
+<br />
 
 ### Usability Testing
 
