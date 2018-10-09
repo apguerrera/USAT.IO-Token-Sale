@@ -14,26 +14,24 @@
 
 
 #### Findings
-  * [] **MEDIUM IMPORTANCE** When people send ETH to the contract, it should fail.
-    * [] Might want to add a revert for the default callback.
+  * [] **MEDIUM IMPORTANCE** USATOZ contract doesn't use onlyOwner modifier  
+    * [] Changing the constructor to \_mint(msg.sender, xxxx) will remove the need for Owned contract
   * [] **LOW IMPORTANCE** When people send ERC20 tokens to the contract, contract owner should be able to transfer them.
-    * [] Could add generic ERC20 interface and transfer function with onlyOwner modifier.
+    * [] Could add generic ERC20 interface and transfer function with onlyOwner modifier.    
   * [] **LOW IMPORTANCE** Mint and burn function is not utilised throughout contract.
     * [] Could consider either making the contract mintable or allocate tokens to the owner within the constructor and remove unused internal functions.
-  * [] **LOW IMPORTANCE** USATOZ contract doesn't use onlyOwner modifier
-      * [] Not explicitly used in this token contract but could be useful later.
   * [] **NOTE** renounceOwnership() does exactly what it describes. Be cautious as it is irreversible.
   * [] **NOTE** transferOwnership() requires extra gas when attempted from a unowned account before its failure. Still behaves as expected though.
 
 <br />
 
-#### Revert Example
+#### Constructor Example
 ```javascript
 // ------------------------------------------------------------------------
-// Don't accept ETH
+// Constructor mints tokens to the sender
 // ------------------------------------------------------------------------
-function () public payable {
-    revert();
+constructor() public {
+     _mint(msg.sender, 1525000000000000000000000000);
 }
 ```
 <br />
