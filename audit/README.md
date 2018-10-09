@@ -31,8 +31,41 @@ USATOZ |   [0xC58aba8193a5e33764244eB07f41B91eF51EA3Ca](https://ropsten.ethersca
 ### Usability Testing
 
 * [x] View Functions
+  * [x] name
+  * [x] symbol
+  * [x] decimals
+  * [x] totalSupply
+  * [x] balanceOf
+  * [x] owner
+  * [x] isOwner
+* [x] Allowance Functions
+  * [x] approve
+  * [x] allowance
+  * [x] increaseAllowance
+  * [x] decreaseAllowance
+* [] Transfer Functions
+  * [] transfer
+  * [] transferFrom
+* [] Ownership Functions
+  * [] renounceOwnership
+  * [] transferOwnership
 
 <br />
+
+### View Functions
+#### Set Variables
+
+Parameters:
+
+No      | Value              | Notes
+:------ |:----------------- |:----
+string | USAT   | symbol
+string | USAT.IO IP Platform   | name
+uint8 | 18    | decimals
+
+
+<br />
+
 
 #### totalSupply
 ```javascript
@@ -45,6 +78,7 @@ No      | Value              | Notes
 :------ |:----------------- |:----
 uint | 1525000000000000000000000000   | 1.525 Billion tokens
 
+<br />
 
 #### balanceOf
 ```javascript
@@ -59,6 +93,33 @@ Parameters:
 No      | Value              | Notes
 :------ |:----------------- |:----
 uint | 1525000000000000000000000000   | 1.525 Billion tokens
+
+<br />
+
+#### owner
+```javascript
+  function owner() public view returns (address)
+```
+
+Parameters:
+
+No      | Value              | Notes
+:------ |:----------------- |:----
+address | 0xf1bfb2aca2bbb78976523b499b525c2c245ea209   | Contract creator
+
+<br />
+
+#### isOwner
+```javascript
+  function isOwner() public view returns (bool)
+```
+
+Parameters:
+
+No      | Value              | Notes
+:------ |:----------------- |:----
+bool | true   | 0xf1bfb2aca2bbb78976523b499b525c2c245ea209 (owner)
+bool | false  | 0xa0c7deea2057ce49b1a8d1df9e90f2aa364f840a
 
 
 <br />
