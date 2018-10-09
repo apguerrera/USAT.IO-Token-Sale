@@ -12,13 +12,17 @@
 
 ## Deployment
 
-* [] [contracts/USAT.sol](contracts/USAT.sol)
+* [x] [contracts/USAT.sol](contracts/USAT.sol)
 
 ### Deployment Addresses
 
 Contract                                | Address
 :-------------------------------------- |:-------
-USATOZ |
+USATOZ |   [0xC58aba8193a5e33764244eB07f41B91eF51EA3Ca](https://ropsten.etherscan.io/tx/0x20e287ec151357cfe4864c24eccaf9c776bc352dbb690dbddc4fb1bec961e1f9)
 
+### Usability Testing
 
-(c) Adrian Guerrera / Deepyr Pty Ltd for USAT - Oct 09 2018. The MIT Licence.
+* [x] View Functions
+  
+
+(c) Adrian Guerrera / Deepyr Pty Ltd for USAT.io - Oct 09 2018. The MIT Licence.
