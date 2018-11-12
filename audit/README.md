@@ -58,15 +58,13 @@ function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwn
 
 Contract                                | Address
 :-------------------------------------- |:-------
-USATOZ |   [0xC58aba8193a5e33764244eB07f41B91eF51EA3Ca](https://ropsten.etherscan.io/tx/0x20e287ec151357cfe4864c24eccaf9c776bc352dbb690dbddc4fb1bec961e1f9)
+USATOZ |   [0x36b874D647F91c87a51cC4e2a026577998A79114](https://etherscan.io/tx/0x74ec5c21ebf2aee53d2a1fb61eb6220ea88c247e72684a3eb78a477bd0c3e793)
 
 <br />
 
 Account                           | Address
 :-------------------------------- |:-------
-owner   | 0xf1bfb2aca2bbb78976523b499b525c2c245ea209
-tester1 | 0xa0c7deea2057ce49b1a8d1df9e90f2aa364f840a
-tester2 | 0xb7b461d9ba5e1fd0fef9ba8b1ee01ca815609609
+owner   | 0x04550faeb8a409b7c5e080d367fd36034d05b37e
 
 <br />
 
@@ -129,7 +127,7 @@ function balanceOf(address who) external view returns (uint256);
 ```
 Input:
 
-0xf1bfb2aca2bbb78976523b499b525c2c245ea209
+0x04550faeb8a409b7c5e080d367fd36034d05b37e
 
 Parameters:
 
@@ -148,7 +146,7 @@ Parameters:
 
 No      | Value              | Notes
 :------ |:----------------- |:----
-address | 0xf1bfb2aca2bbb78976523b499b525c2c245ea209   | Contract creator
+address | 0x04550faeb8a409b7c5e080d367fd36034d05b37e   | Contract creator
 
 <br />
 
@@ -161,7 +159,7 @@ Parameters:
 
 No      | Value              | Notes
 :------ |:----------------- |:----
-bool | true   | 0xf1bfb2aca2bbb78976523b499b525c2c245ea209 (owner)
+bool | true   | 0x04550faeb8a409b7c5e080d367fd36034d05b37e (owner)
 bool | false  | 0xa0c7deea2057ce49b1a8d1df9e90f2aa364f840a
 
 
